@@ -27,10 +27,23 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Para usar nuestros modelos, tenemos que decir a Sjango que incluya nuestra aplicación en el proyecto
+# general. Para ello en settings.py entramos en la siguiente sección y añadimos primero nuestras aplicaciones
+# y luego dejamos las predeterminadas que ya estaban.
+
+# Cada vez que queramos modificar los datos que maneja learning_log, seguiremos estros 3 pasos:
+# - (1) Modificar models.py
+# - (2) modificar la base de datos. En este momento queremos que añada la clase Topic.
+# En terminal: python manage.py makemigrations learning_logs
+# - (3) Decir a Django que migre el proyecto.
 
 # Application definition
 
 INSTALLED_APPS = [
+    # Mis aplicaciones
+    'learning_logs',
+    
+    # Aplicaciones predeterminadas.
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
