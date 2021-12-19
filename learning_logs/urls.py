@@ -12,6 +12,9 @@ app_name = 'learning_logs'
 urlpatterns = [
     # Página de inicio
     path('', views.index, name='index'),
+    path('topics/', views.topics, name='topics'),
+    # página de detalles sobre un tema individual.
+    path('topics/<int:topic_id>/', views.topic, name='topic'),
 ]
 # urlpatterns es un lista de páginas individuales que se pueden solicitar a la aplicación learning logs.
 # los argumentos de path() significan lo soguiente:

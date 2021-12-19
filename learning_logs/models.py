@@ -29,7 +29,7 @@ class Entry(models.Model):
     """Para poder registrar algo especifico aprendido sobre un tema"""
     topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     text = models.TextField()
-    data_added = models.DateTimeField(auto_now_add=True)
+    date_added = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name_plural = 'entries'

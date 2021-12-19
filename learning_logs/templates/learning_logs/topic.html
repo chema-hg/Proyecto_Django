@@ -1,0 +1,25 @@
+<!-- Esta plantilla muestra el nombre de cada tema y sus entradas -->
+{% extends 'learning_logs/base.html' %}
+
+{% block content %}
+    <p>Tema: {{topic}}</p>
+
+    <p> Entradas:</p>
+    <ul>
+        {% for entry in entries%}
+            <li>
+                <p>{{ entry.date_added|date:'M d, Y H:i' }}</p>
+                <p>{{ entry.text|linebreaks }}</p>
+            </li>
+        {% empty %}
+            <li> No hay entradas aun para este tema.</li>
+        {% endfor %}
+    </ul>
+
+{% endblock content %}
+
+<!-- En las plantillas de Django este simbolo | representa un filtro de plantilla, es decir un valor
+que modifica el valor de la variable en la plantilla. El filtrodate:'M d, Y H:i' muestra los sellos del
+tiempo con el formato enero 1, 2018  23.00. el filtro linebreaks garantiza que las entradas de texto
+grande incluyan saltos de línea en un formato que entiendan los navegadores en lugar de mostrar un
+bloque de texto ininterrumpido. -->

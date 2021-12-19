@@ -1,0 +1,16 @@
+<!-- Plantilla base de la que heredaran las demás -->
+<p>
+    <a href="{% url 'learning_logs:index' %}">learning log</a> <!-- (1) -->
+    <a href="{% url 'learning_logs:topics' %}">Temas</a>
+</p>
+
+{% block content %}{% endblock content %}
+
+<!-- La primera parte de este archivo crea un párrafo que contiene el nombre del proyecto, pero que
+también actua como enlace a la página de inicio. Para generar el enlace, usamos una etiqueta de plantilla, que
+se indica con llaves y signos de porcentaje. Esta etiqueta genera información par mostrar en una página.
+La etiqueta {% url 'learning_logs:index' %} genera una URL que coincide con el patrón de URL definido
+en learning_logs/urls.py con el nombre 'index' (1) En este ejemplo, learning_logs es el espacio de nombres e
+index es un patrón de URL don un nombre único en ese espacio. El espacio de nombres viene del valor que
+asignamos a app_name en el archivo learning_logs/urls.py -->
+
