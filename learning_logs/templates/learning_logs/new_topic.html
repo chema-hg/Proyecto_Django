@@ -1,0 +1,20 @@
+{% extends "learning_logs/base.html" %}
+
+{% block content %}
+    <p>Añade un nuevo tema:</p>
+
+    <form action="{% url 'learning_logs:new_topic' %}" method='post'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button name="submit">Añadir tema</button>
+    </form>
+{% endblock content %}
+
+<!-- El argumento action le dice al navegador donde enviar los datos del formulario.
+El argumento method le dice que use el método POST.
+Para evitar que los atacantes usen el formulario para acceder al servidor sin autorización utilizamos
+la etiqueta {% csrf_token %}
+Luego mostramos el formulario. Solo tenemos que incluir la variable de la plantilla para que
+Django se ocupe de crear todos los campos. El modificador .as_p dice a Django que represente todos
+los elementos del formulario en formato de párrafo.
+Django no crea un boton para enviar el formulario asi que hay que hacerlo a mano. -->

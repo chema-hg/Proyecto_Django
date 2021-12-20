@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from .models import Topic  # (1)
+from .forms import TopicForm
 
 
 # Create your views here.
@@ -35,6 +36,8 @@ def topic(request, topic_id):  # (1)
     entries = topic.entry_set.order_by('-date_added')  # (3)
     context = {'topic': topic, 'entries': entries}  # (4)
     return render(request, 'learning_logs/topic.html', context)  # (5)
+
+
 # Esta es la primera función de vista que requiere un párametro distinto del objeto request. La función
 # acepta el valor capturado por la expresión /<int:topic_id>/ y lo guarda en topic_id (1). En (2)
 # usamos get() para recuperar el tema, igual que hicimos en el intérprete de Django. En (3) obtenemos las
@@ -52,3 +55,45 @@ def topic(request, topic_id):  # (1)
 
 # La documentación sobre plantillas de django se encuentra en:
 # https://docs.djangoproject.com/es/4.0/ref/templates/
+
+def new_topic(request):
+    """Añade un tema nuevo"""
+    if request.method != 'POST':  # (1)
+        # no se han enviado los datos; creamos un formulario en blanco.
+        form = TopicForm()  # (2)
+    else:
+        # Datos enviados mediante POST, hay que procesarlo.
+        form = TopicForm(data=request.POST)  # (3)
+        if form.is_valid():  # (4)
+            form.save()  # (5)
+            return redirect('learning_logs:topics')  # (6)
+    # Muestra un formulario en blanco o no valido.
+    context = {'form': form}  # (7)
+    return render(request, 'learning_logs/new_topic.html', context)
+
+# La función new_topic() necesita manejar dos tipos de situaciones diferentes:
+# - Solicitudes iniciales de la página new_topic (en donde hay que mostrar el formulario en blanco,
+# y el procesamiento de la información enviada con el formulario. Y una vez procesada la información
+# hay que mandarle de vuelta al sitio topics.
+# Empezamos importando la función redirect, que usaremos para redirigir al usuario a la página topics
+# después de enviar su tema. La función redirect() coge el nombre de una vista y redirige alli al usuario.
+# También importamos el formulario que acabamos de escribir. TopicForm.
+
+# El condicional en (1) establece si la solicitud es GET o POST. Si no es post es probable que la
+# solicitud sea GET y por tanto tengamos que mostrar el formulario en blanco. Creamos una instancia de
+# TopicForm en (2) y se la asignamos a la variable form y enviamos el formulario a la plantilla en el
+# diccionario context. Como no incluimos argumentos al crear la instancia de TopicForm, Django crea un
+# formulario en blanco que el usuario pueda rellenar.
+# Si la solicitud es POST se ejecuta el bloque else y procesa los datos introducidos por el usuario,
+# y guardamos en request.POST. El objeto form devuelto contiene la información enviada por el usuario (3).
+# Sin embargo no podemos guardar la información en la base de datos sin antes comprobamos que es válida.
+# (4) el método is_valid() comprueba que se han rellenado todos los campos obligatorios, (que por defecto
+# todos lo son) y que coinciden con los tipos de campos esperados, por ejemplo que la longitud de text
+# es menor que 200 caracteres, como especificamos en models.py. Esta validación automática ahorra mucho
+# trabajo. Si es correcto llamamos a save() (5) que escribe los datos del formulario en la base de
+# datos. Una vez guardados los datos llamamos a redirect para redirigir al navegador a la página topics.
+
+# La variable context se define al final de la función de vista y la página se muestra con la plantilla
+# new_topic.html. Este código se coloca fuera de cualquier bloque if; se ejecutara si se ha creado un
+# formulario en blanco y también si se ha enviado un formulario que no se considera válido. Un formulario
+# no válido incluirá mensajes de error predeterminados para ayudar al usuario a enviar datos aceptables.
