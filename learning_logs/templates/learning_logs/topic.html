@@ -5,6 +5,9 @@
     <p>Tema: {{topic}}</p>
 
     <p> Entradas:</p>
+    <p>
+        <a href="{% url 'learning_logs:new_entry' topic.id %}">Añadir una nueva Entrada</a>
+    </p>
     <ul>
         {% for entry in entries%}
             <li>
@@ -18,7 +21,7 @@
 
 {% endblock content %}
 
-<!-- En las plantillas de Django este simbolo | representa un filtro de plantilla, es decir un valor
+<!-- En las plantillas de Django este símbolo | representa un filtro de plantilla, es decir un valor
 que modifica el valor de la variable en la plantilla. El filtrodate:'M d, Y H:i' muestra los sellos del
 tiempo con el formato enero 1, 2018  23.00. el filtro linebreaks garantiza que las entradas de texto
 grande incluyan saltos de línea en un formato que entiendan los navegadores en lugar de mostrar un

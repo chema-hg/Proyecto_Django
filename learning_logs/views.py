@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 
 from .models import Topic  # (1)
-from .forms import TopicForm
+from .forms import TopicForm, EntryForm
 
 
 # Create your views here.
 
 # Una función de vista coge la información de una solicitud , prepara los datos necesarios para generar la
-# página y los envia de vuelta al navegador, con frecuencia usando una plantilla que define el aspecto
+# página y los envía de vuelta al navegador, con frecuencia usando una plantilla que define el aspecto
 # de la página.
 
 def index(request):
@@ -71,6 +71,7 @@ def new_topic(request):
     context = {'form': form}  # (7)
     return render(request, 'learning_logs/new_topic.html', context)
 
+
 # La función new_topic() necesita manejar dos tipos de situaciones diferentes:
 # - Solicitudes iniciales de la página new_topic (en donde hay que mostrar el formulario en blanco,
 # y el procesamiento de la información enviada con el formulario. Y una vez procesada la información
@@ -97,3 +98,43 @@ def new_topic(request):
 # new_topic.html. Este código se coloca fuera de cualquier bloque if; se ejecutara si se ha creado un
 # formulario en blanco y también si se ha enviado un formulario que no se considera válido. Un formulario
 # no válido incluirá mensajes de error predeterminados para ayudar al usuario a enviar datos aceptables.
+
+def new_entry(request, topic_id):
+    """Añade una entrada nueva para un tema particular."""
+    topic = Topic.objects.get(id=topic_id)  # (1)
+
+    if request.method != 'POST':  # (2)
+        # No se han enviado datos y por tanto se crea un formulario en blanco.
+        form = EntryForm()  # (3)
+    else:
+        # Datos POST enviados; procesa los datos.
+        form = EntryForm(data=request.POST)  # (4)
+        if form.is_valid():
+            new_entry = form.save(commit=False)  # (5)
+            new_entry.topic = topic # (6)
+            new_entry.save()
+            return redirect('learning_logs:topic', topic_id=topic_id)  # (7)
+
+    # Muestra un formulario en blanco o no válido.
+    context = {'topic': topic, 'form': form}
+    return render(request, 'learning_logs/new_entry.html', context)
+
+    # Actualizamos la sentencia import par que incluya el EntryForm. La definición de new_entry() tiene
+# que ser un paŕametro topic_id para almacenar el valor que recibe de la URL. Necesitaremos el tema para
+# renderizar la página y procesar los datos del formulario, asi que usamos topic_id para obtener el objeto
+# de tema correcto en (1)
+
+# En (2) comprobamos si el método de solicitud es POST o GET. El bloque if se ejecuta si se trata de una
+# solicitud GET y se crea una instancia en blanco de EntryForm (3). Si el método de la solicitud es POST,
+# procesamos los datos haciendo una instancia de EntryForm. con los datos POST del objeto request (4)
+# Después comprobamos si el formulario es válido. Si lo es necesitamos configurar el atributo topic
+# antes de guardarlo en la base de datos. Cuando llamemos a save() incluimos el argumento commit=False (5)
+# para que se cree un nuevo objeto de entrada y lo asigne a new_entry sin guardarlo todavía en la base
+# de datos. Configuramos el atributo topic de new_entry con el tema extraido de la base de datos al
+# principio de la función (6). DEspues llamamos a save() sin argumentos, guardando la entrada en la
+# base de datos con el tema correcto ya asociado.
+
+# La llamada a redirect() en (7) requiere de dos argumentos: el nombre de la vista donde queremos redi-
+# rigir y el argumento que necesita esa función de vista. Aquí estamos redirigiendo a topic() que requiere
+# el argumento topic_id. Esa vista muestra la página del tema para la que el usuario ha hecho la entrada
+# y debería verse la entrada para la lista de entradas.

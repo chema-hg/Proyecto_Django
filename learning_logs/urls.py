@@ -16,7 +16,9 @@ urlpatterns = [
     # página de detalles sobre un tema individual.
     path('topics/<int:topic_id>/', views.topic, name='topic'),
     # Url de la nueva entrada new_topic
-    path('new_topic/', views.new_topic, name='new_topic')
+    path('new_topic/', views.new_topic, name='new_topic'),
+    # Url de la nueva entrada new_entry
+    path('new_entry/<int:topic_id>/', views.new_entry, name='new_entry'),
 ]
 # urlpatterns es un lista de páginas individuales que se pueden solicitar a la aplicación learning logs.
 # los argumentos de path() significan lo soguiente:
