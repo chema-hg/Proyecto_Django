@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from .models import Topic  # (1)
+from .models import Topic, Entry  # (1)
 from .forms import TopicForm, EntryForm
 
 
@@ -138,3 +138,21 @@ def new_entry(request, topic_id):
 # rigir y el argumento que necesita esa función de vista. Aquí estamos redirigiendo a topic() que requiere
 # el argumento topic_id. Esa vista muestra la página del tema para la que el usuario ha hecho la entrada
 # y debería verse la entrada para la lista de entradas.
+
+def edit_entry(request, entry_id):
+    "edita una entrada existente."
+    entry = Entry.objects.get(id=entry_id)
+    topic = entry.topic
+
+    if request.method != 'POST':
+        # Solicitud inicial se rellena el campo con los datos de la entrada actual.
+        form = EntryForm(instance=entry)
+    else:
+        # Datos enviados con POST para procesar
+        form = EntryForm(instance=entry, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('learning_logs:topic', topic_id=topic.id)
+
+    context = {'entry': entry, 'topic': topic, 'form': form}
+    return render(request, 'learning_logs/edit_entry.html', context)
