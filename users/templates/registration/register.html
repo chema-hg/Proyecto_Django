@@ -1,0 +1,16 @@
+{% extends "learning_logs/base.html" %}
+
+{% block content %}
+
+    <form method="post" action="{% url 'users:register' %}">
+        {% csrf_token %}
+        {{ form.as_p}}
+
+        <button name="submit">Registar</button>
+        <input type="hidden" name="next" value="{% url 'learning_logs:index' %}" />
+    </form>
+
+{% endblock content %}
+
+<!-- Usamos el método as_p para que Django muestre bien todos los campos del formulario,
+incluidos los mensajes de error si el formulario no se ha rellenado correctamente -->

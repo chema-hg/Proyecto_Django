@@ -19,4 +19,5 @@ from django.urls import path, include
 urlpatterns = [
     path('', include('learning_logs.urls')),  # para incluir las urls de nuestra aplicación learning_logs.
     path('admin/', admin.site.urls),
+    path('users/', include('users.urls')),
 ]

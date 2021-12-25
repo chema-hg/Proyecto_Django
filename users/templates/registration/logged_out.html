@@ -1,0 +1,11 @@
+{% extends "learning_logs/base.html" %}
+
+{% block content %}
+    <p>Te has desconectado correctamente. ¡Gracias por la visita!</p>
+{% endblock content %}
+
+<!-- La vista que ya trae Django por defecto logout tambien tiene una plantilla por defecto.
+Si no la creasemos el usuario se desconectaria igual pero con un mensaje ya preestablecido por
+Django. Al crearla nosotros podemos personalizar le mensaje, pero repito que no haria fala pues
+tanto la vista como la plantilla ya las tiene Django preestablecidas. hay que crearla en
+templates/registration/logged_out.html-->

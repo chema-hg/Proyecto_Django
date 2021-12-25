@@ -1,0 +1,35 @@
+{% extends "learning_logs/base.html" %}
+
+{% block content %}
+
+    {% if form.errors %} <!-- (1) -->
+        <p>Tu nombre de usuario y/o contraseña no coinciden. Por favor inténtalo de nuevo.</p>
+    {% endif %}
+
+    <form method="post" action="{% url 'users:login' %}"> <!-- (2) -->
+        {% csrf_token %}
+        {{ form.as_p }} <!-- (3) -->
+
+        <button name="Enviar">Log in</button> <!-- (4) -->
+        <input type="hidden" name="next"
+               value="{% url 'learning_logs:index' %}" />  <!-- (5) -->
+    </form>
+
+    {% endblock content %}
+
+# Cuando el usuario solicite la página login, Django usará una función de vista predeterminada, pero
+# seguimos necesitando aportar una plantilla para la página. Las vistas de autentificación predeterminadas
+# buscan plantillas dentro de una carpeta llamada 'registration', asi que tendremos que CREAR ESA CARPETA.
+# Dentro del directorio learning_log/users/, CREAMOS una carpeta llamada templates y dentro de esta OTRA
+# LLAMADA registration. Este código es el de la plantilla login.html que debe estar en learning_log/users/
+# templates/registration
+
+# En este ejemplo se puede ver como una plantilla de una aplicación puede heredar de una plantilla de otra
+# aplicación. Si el atributo errors del formulario está configurado, mostramos un mensaje de error (1)
+# informando que esa combinación de nombre de usuario y contraseña no coinciden con nada almacendado en
+# la base de datos. Como queremos que la vista login procese el formulario, configuramos el argumento
+# action como la URL de la página de inicio de sesión. (2) Esta vista envía un formulario a la plantilla y
+# depende de nosotros mostrar el formulario (3) y añadir un botón para enviarlo. (4)
+# En (5) incluimos un elemento de formulario oculto, 'next'; el argumento value dice a Django adónde
+# redirigir al usuario después de iniciar sesión correctamente. En este caso lo enviamos de vuelta a
+# la pantalla de inicio.

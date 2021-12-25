@@ -1,7 +1,14 @@
 <!-- Plantilla base de la que heredaran las demás -->
 <p>
-    <a href="{% url 'learning_logs:index' %}">learning log</a> <!-- (1) -->
-    <a href="{% url 'learning_logs:topics' %}">Temas</a>
+    <a href="{% url 'learning_logs:index' %}">learning log</a> -<!-- (1) -->
+    <a href="{% url 'learning_logs:topics' %}">Temas</a> -
+    {% if user.is_authenticated %}
+        Bienvenido, {{ user.username }}. <!-- (2) -->
+        <a href="{% url 'users:logout' %}">Log Out</a>
+    {% else %}
+        <a href="{% url 'users:register' %}">Registrarse</a> -
+        <a href="{% url 'users:login' %}">Log in</a> <!-- (3) -->
+    {% endif %}
 </p>
 
 {% block content %}{% endblock content %}
@@ -13,4 +20,15 @@ La etiqueta {% url 'learning_logs:index' %} genera una URL que coincide con el p
 en learning_logs/urls.py con el nombre 'index' (1) En este ejemplo, learning_logs es el espacio de nombres e
 index es un patrón de URL don un nombre único en ese espacio. El espacio de nombres viene del valor que
 asignamos a app_name en el archivo learning_logs/urls.py -->
+
+<!-- Al añadir la aplicación de usuarios añadimos un enlace para que aparezca el log in en todas las
+páginas. Sin embargo, no queremos que se muestre cuando el usuario ya ha iniciado sesión asi que lo anidamos
+ en una etiqueta if. En el sistema de autentificación de Django, CADA PLANTILLA TIENE disponible una
+ variable user, que siempre tiene configurado un atributo is_authenticated: el atributo es True si el
+ usuario ha iniciado sesión y False si no lo ha hecho. Este atributo permite mostrar un mensaje personalizado.
+ Los usuarios autentificados tienen además otro atributo username, que usamos para personalizar el saludo
+ y recordar al usuario que ha iniciado sesión (2). En (3) mostramos un enlace a la página de inicio de
+ sesión para los usuarios qeu no lo han hecho.
+
+
 
