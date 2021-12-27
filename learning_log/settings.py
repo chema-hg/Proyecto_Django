@@ -135,3 +135,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Mi configuración de cual es la página de login
+LOGIN_URL = 'users:login'
+# Ahora cuando el usuario autnticado solicite una página protegida por el decorador @login_required
+# Django enviará al usuario a la URL definida por LOGIN_URL

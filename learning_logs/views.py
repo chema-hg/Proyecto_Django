@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import Http404
+# Un error 404 es un error standar que se devuelve cuando un recurso no existe en el servidor.
 
 from .models import Topic, Entry  # (1)
 from .forms import TopicForm, EntryForm
+
 
 
 # Create your views here.
@@ -14,10 +18,15 @@ def index(request):
     """La página de inicio de learning_logs"""
     return render(request, 'learning_logs/index.html')
 
-
+# El siguiente decorador lo que hace es comprobar si el usuario ha iniciado sesión y si es así
+# ejecuta el codigo de topics(). Si no ha iniciado sesión le redirige a la página de inicio, pero
+# para ello primero hay que modificar settings.py para que Django sepa donde encontrar la página de
+# inicio de sesión.
+@login_required
 def topics(request):  # (2)
     "Muestra todos los temas."
-    topics = Topic.objects.order_by('date_added')  # (3)
+    topics = Topic.objects.filter(owner=request.user).order_by('date_added') # (5)
+    # topics = Topic.objects.order_by('date_added')  # (3)
     context = {'topics': topics}
     return render(request, 'learning_logs/topics.html', context)  # (4)
 
@@ -29,10 +38,18 @@ def topics(request):  # (2)
 # En (4) definimos un contexto que enviaremos a la plantilla. Un contexto es un diccionario en el que las claves
 # son nombres que usaremos en la plantilla para acceder a los datos y los valores son los datos que tenemos
 # que enviar a la plantilla.
+# (5) esta montado casi al final del proyecto para permitir que cada usuario solo pueda ver
+# los temas que le pertenecen, ya que esto es una agenda para que cada usuario pueda registrar.
+# los avances que le interesan de su tema concreto.
 
+@login_required
 def topic(request, topic_id):  # (1)
     """Muestra un tema concreto y todas sus entradas."""
     topic = Topic.objects.get(id=topic_id)  # (2)
+    # Se asegura que el tema pertenece al usuario final.
+    if topic.owner != request.user:
+        raise Http404
+
     entries = topic.entry_set.order_by('-date_added')  # (3)
     context = {'topic': topic, 'entries': entries}  # (4)
     return render(request, 'learning_logs/topic.html', context)  # (5)
@@ -56,6 +73,7 @@ def topic(request, topic_id):  # (1)
 # La documentación sobre plantillas de django se encuentra en:
 # https://docs.djangoproject.com/es/4.0/ref/templates/
 
+@login_required
 def new_topic(request):
     """Añade un tema nuevo"""
     if request.method != 'POST':  # (1)
@@ -65,7 +83,10 @@ def new_topic(request):
         # Datos enviados mediante POST, hay que procesarlo.
         form = TopicForm(data=request.POST)  # (3)
         if form.is_valid():  # (4)
-            form.save()  # (5)
+            new_topic = form.save(commit=False)
+            new_topic.owner = request.user
+            new_topic.save()
+            # form.save()  # (5)
             return redirect('learning_logs:topics')  # (6)
     # Muestra un formulario en blanco o no valido.
     context = {'form': form}  # (7)
@@ -99,6 +120,7 @@ def new_topic(request):
 # formulario en blanco y también si se ha enviado un formulario que no se considera válido. Un formulario
 # no válido incluirá mensajes de error predeterminados para ayudar al usuario a enviar datos aceptables.
 
+@login_required
 def new_entry(request, topic_id):
     """Añade una entrada nueva para un tema particular."""
     topic = Topic.objects.get(id=topic_id)  # (1)
@@ -139,10 +161,13 @@ def new_entry(request, topic_id):
 # el argumento topic_id. Esa vista muestra la página del tema para la que el usuario ha hecho la entrada
 # y debería verse la entrada para la lista de entradas.
 
+@login_required
 def edit_entry(request, entry_id):
     "edita una entrada existente."
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
+    if topic.owner != request.user:
+        raise Http404
 
     if request.method != 'POST':
         # Solicitud inicial se rellena el campo con los datos de la entrada actual.

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Un módelo le dice a Django cómo trabajar con los datos que se guardarán en la aplicación.
 # En lo que a código respecta un modelo es simplemente una clase: Tiene atributos y métodos.
@@ -9,6 +10,10 @@ class Topic(models.Model):
     """Un tema sobre el que está aprendiendo el usuario"""
     text = models.CharField(max_length=200)
     date_added = models.DateTimeField(auto_now_add=True)
+
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    # Con esta última línea importamos el modelo User de django.contrib.auth. Después hemos añadido
+    # el campo owner a Topic que establece una relación de clave foránea con el modelo USer.
 
     def __str__(self):
         """Devuelve una representación del modelo como una cadena."""
