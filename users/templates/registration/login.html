@@ -1,16 +1,19 @@
 {% extends "learning_logs/base.html" %}
+{% load bootstrap4 %}
+
+{% block page_header %}
+    <h2>Entra en tu cuenta.</h2>
+{% endblock page_header %}
 
 {% block content %}
 
-    {% if form.errors %} <!-- (1) -->
-        <p>Tu nombre de usuario y/o contraseña no coinciden. Por favor inténtalo de nuevo.</p>
-    {% endif %}
-
-    <form method="post" action="{% url 'users:login' %}"> <!-- (2) -->
+    <form method="post" action="{% url 'users:login' %}" class="form"> <!-- (2) -->
         {% csrf_token %}
-        {{ form.as_p }} <!-- (3) -->
+        {% bootstrap_form form %} <!-- (3) -->
+        {% buttons %}
+            <button name="Enviar" class="btn btn-primary">Log in</button> <!-- (4) -->
+        {% endbuttons %}
 
-        <button name="Enviar">Log in</button> <!-- (4) -->
         <input type="hidden" name="next"
                value="{% url 'learning_logs:index' %}" />  <!-- (5) -->
     </form>

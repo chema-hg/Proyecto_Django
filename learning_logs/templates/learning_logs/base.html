@@ -1,34 +1,99 @@
-<!-- Plantilla base de la que heredaran las demás -->
-<p>
-    <a href="{% url 'learning_logs:index' %}">learning log</a> -<!-- (1) -->
-    <a href="{% url 'learning_logs:topics' %}">Temas</a> -
-    {% if user.is_authenticated %}
-        Bienvenido, {{ user.username }}. <!-- (2) -->
-        <a href="{% url 'users:logout' %}">Log Out</a>
-    {% else %}
-        <a href="{% url 'users:register' %}">Registrarse</a> -
-        <a href="{% url 'users:login' %}">Log in</a> <!-- (3) -->
-    {% endif %}
-</p>
+{% load bootstrap4 %}
+<!-- Cargamos la colección de etiquetas de plantilla disponibles en djangobootstrap5 -->
 
-{% block content %}{% endblock content %}
+<!doctype html>
 
-<!-- La primera parte de este archivo crea un párrafo que contiene el nombre del proyecto, pero que
-también actua como enlace a la página de inicio. Para generar el enlace, usamos una etiqueta de plantilla, que
-se indica con llaves y signos de porcentaje. Esta etiqueta genera información par mostrar en una página.
-La etiqueta {% url 'learning_logs:index' %} genera una URL que coincide con el patrón de URL definido
-en learning_logs/urls.py con el nombre 'index' (1) En este ejemplo, learning_logs es el espacio de nombres e
-index es un patrón de URL don un nombre único en ese espacio. El espacio de nombres viene del valor que
-asignamos a app_name en el archivo learning_logs/urls.py -->
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Learning Log</title>
 
-<!-- Al añadir la aplicación de usuarios añadimos un enlace para que aparezca el log in en todas las
-páginas. Sin embargo, no queremos que se muestre cuando el usuario ya ha iniciado sesión asi que lo anidamos
- en una etiqueta if. En el sistema de autentificación de Django, CADA PLANTILLA TIENE disponible una
- variable user, que siempre tiene configurado un atributo is_authenticated: el atributo es True si el
- usuario ha iniciado sesión y False si no lo ha hecho. Este atributo permite mostrar un mensaje personalizado.
- Los usuarios autentificados tienen además otro atributo username, que usamos para personalizar el saludo
- y recordar al usuario que ha iniciado sesión (2). En (3) mostramos un enlace a la página de inicio de
- sesión para los usuarios qeu no lo han hecho.
+    {% bootstrap_css %}
+    <!-- usamos las etiquetas de estilo de Bootstrap -->
+    {% bootstrap_javascript jquery='full' %}
+    <!-- usamos la etiqueta que permite el comportamiento interactivo, como barras de navegacion
+    que se pueden desplegar o reducir -->
 
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-light bg-light mb-4 border">
+        <!-- arriba hay un elemento <nav> que indica la sección de enlaces de navegación de la página
+        . Lo contenido dentro de esa etiqueta recibe las reglas de estilo de bootstrap. Los selectores
+        Pej navabar-light y bg-light aplican a la barra de navegación un estilo con un fondo claro. La
+        mb es de margen inferior de 4 para que haya un poco de espacio entre la barra de navegación y el
+        resto de la página. El selector border aplica un borde fino alrededor del fondo calro para
+        separarlo un poco del resto de la página. -->
+        <a class="navbar-brand" href="{% url 'learning_logs:index'%}">
+            Learning Log</a>
+        <!-- Hacemos que el nombre del proyecto aparezca en el extremo izquierdo de la barra de navegación
+        y lo convertimos en un enlace a la página de inicio. Aparecerá en todas las páginas del proyecto.
+        El selector navbar-brand aplica estilo a este enlace para que destaque de los demás y es una
+        forma de crear una marca para el sitio. -->
 
+        <button class="navbar-toggler" type="button" data-toggle="collapse"
+                data-target="#navbarCollapse" aria-controls="navbarCollapse"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span></button>
+        <!-- La plantilla define un boton que aparecera si la ventana del navegador es demasiado
+        estrecha como para mostrar toda la barra de navegación horizontalmente. Cuando el usuario
+        haga click en el boton, los elementos de navegación aparecerán en una lista desplegable. La
+        referencia collapse hace que la barra de navegación se contraiga cuando el usuario reduce la
+        ventana del navegador o el sitio se muestra en un dispositivo móvil con pantalla pequeña.-->
 
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'learning_logs:topics' %}">
+                        Temas</a></li>
+            </ul>
+            <!-- Abrimos una nueva sección de la barra de navegación. El término div es una forma abreviada
+        de division; construimos una página web dividiéndola en secciones y definiendo reglas de estilo
+        y comportamiento que se aplican a esa sección. Cualquier regla de estilo o comportamiento definida
+        en una etiqueta de apertura <div> afecta a toda lo que vemos hasta la etiqueta de cierre. Este
+        código es el principio de la barra de navegación que se contraerá en las pantallas y ventanas
+        pequeñas.
+        Luego definimos un conjunto de enlaces. Bootstrap define elementos de navegación como elementos de
+        lista desordenada con reglas de estilo que hacen que no parezca una lista para nada. Aquí, el único
+        elemento de la lista de nuestro enlace es Temas.-->
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <span class="navbar-text">Hola, {{ user.username }}.</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:logout' %}">Log out</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:register' %}">Registrarse</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:login' %}">Log in</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <main role="main" class="container">
+        <div class="pb-2 mb-2 border-bottom">
+            {% block page_header %}{% endblock page_header %}
+        </div>
+        <div>
+            {% block content %}{% endblock content %}
+        </div>
+    </main>
+    <!-- La etiqueta main se usa para la parte más importante del cuerpo de una página. Aqui usamos
+    el selector container que es una forma sencilla de agrupar los elementos de una página.
+    El primer div continee un bloque page_header. Se usara para dar titulo a la mayoria de las paginas.
+    Para que esta seccion destaque del resto de la pagina, pondremos un poco de relleno debajo del
+    encabezado. El relleno es el espacio entre el contenido de un elemento y su borde. El selector pb-2
+    proporcionea un cantidad de relleno moderada en la parte inferior del elemento al que se aplica el
+    estilo. Border-bottom pone un borde fino al final del bloque page_header.
+        El otro div contiene el bloque content.
+
+</body>
+</html>

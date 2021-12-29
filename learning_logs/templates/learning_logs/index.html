@@ -1,6 +1,16 @@
 {% extends "learning_logs/base.html" %}
 
-{% block content %}
-<p> Learning Log te ayuda a mantener un seguimiento, sobre cualquier cosa que hayas aprendido
-    sobre un tema.</p>
-{% endblock content %}
+{% block page_header %}
+    <div class="jumbotron">
+        <h1 class="display-3">Sigue tu aprendizaje.</h1>
+
+        <p class="lead">Haz tu propio Learning Log, y mantén una lista de los temas sobre los que estás
+        aprendiendo. En cualquier momento en el que aprendas algo nuevo sobre un tema, haz una entrada
+        para recordar lo que has aprendido.</p>
+
+        <a class="btn btn-lg btn-primary" href="{% url 'users:register' %}"
+           role="button">Registrar &raquo;</a>
+    </div>
+{% endblock page_header %}
+
+<!-- Hemos quitado el block content que habia anteriormente ya que ahora no se necesita.-->
