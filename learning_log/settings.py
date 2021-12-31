@@ -144,3 +144,6 @@ LOGIN_URL = 'users:login'
 # Ahora cuando el usuario autnticado solicite una página protegida por el decorador @login_required
 # Django enviará al usuario a la URL definida por LOGIN_URL
 
+# Configuraciones especificas para que funcione en Heroku
+import django_heroku
+django_heroku.settings(locals())
