@@ -145,5 +145,11 @@ LOGIN_URL = 'users:login'
 # Django enviará al usuario a la URL definida por LOGIN_URL
 
 # Configuraciones especificas para que funcione en Heroku
+import os
 import django_heroku
 django_heroku.settings(locals())
+
+if os.environ.get('DEBUG')=='TRUE':
+    DEBUG = True
+elif os.environ.get('DEBUG')=='FALSE':
+    DEBUG = False
