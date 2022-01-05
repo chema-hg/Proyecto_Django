@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-&_qg+odvn+^v2!#vg32iq4&gl*n+dqij9#05k!8&dxjg&h1vgv'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -146,7 +146,6 @@ LOGIN_URL = 'users:login'
 # Django enviará al usuario a la URL definida por LOGIN_URL
 
 # Configuraciones especificas para que funcione en Heroku
-import os
 import django_heroku
 django_heroku.settings(locals())
 
