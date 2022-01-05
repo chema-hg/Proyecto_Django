@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
 # Un error 404 es un error standar que se devuelve cuando un recurso no existe en el servidor.
@@ -45,7 +45,12 @@ def topics(request):  # (2)
 @login_required
 def topic(request, topic_id):  # (1)
     """Muestra un tema concreto y todas sus entradas."""
-    topic = Topic.objects.get(id=topic_id)  # (2)
+    # topic = Topic.objects.get(id=topic_id)  # (2)
+    topic = get_object_or_404(Topic, id=topic_id)
+    # Si un usuario solicita manualmente un tema o entrada que no existe, antes de poner la linea
+    # anterior obtenia un error de servidor 500. Sin embargo esta situación queda más clara como
+    # un error 404, lo cual implementamos usando la funcion get_object_or_404() Esta función intenta
+    # obtener el objeto solicitado de la base de datos, pero, si no existe, lanza una excepción 404.
     # Se asegura que el tema pertenece al usuario final.
     if topic.owner != request.user:
         raise Http404
